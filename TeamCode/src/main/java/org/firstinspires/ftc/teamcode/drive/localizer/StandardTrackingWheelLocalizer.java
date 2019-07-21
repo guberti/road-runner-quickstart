@@ -31,17 +31,17 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = 1.14426;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    // TODO Determine these distances
-    public static double LATERAL_DISTANCE = 10; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 4; // in; offset of the lateral wheel
+    public static double LEFT_Y_POS = 2.81;
+    public static double RIGHT_Y_POS = -3.30;
+    public static double LAT_X_POS = -7.30;
 
     private DcMotor leftParallelEncoder, rightParallelEncoder, lateralEncoder;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
-                new Vector2d(0, LATERAL_DISTANCE / 2), // left
-                new Vector2d(0, -LATERAL_DISTANCE / 2), // right
-                new Vector2d(FORWARD_OFFSET, 0) // front
+                new Vector2d(0, LEFT_Y_POS), // left
+                new Vector2d(0, RIGHT_Y_POS), // right
+                new Vector2d(LAT_X_POS, 0) // front
         ), Arrays.asList(0.0, Math.toRadians(180.0), Math.toRadians(90.0)));
         // Second encoders must be flipped around 180 degrees, but why?
 
