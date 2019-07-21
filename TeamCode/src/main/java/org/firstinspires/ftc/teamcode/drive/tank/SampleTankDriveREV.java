@@ -24,6 +24,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksTo
 public class SampleTankDriveREV extends SampleTankDriveBase {
     private List<DcMotorEx> motors, leftMotors, rightMotors;
     private BNO055IMU imu;
+    public StandardTrackingWheelLocalizer encoderWheels;
 
     public SampleTankDriveREV(HardwareMap hardwareMap) {
         super();
@@ -65,7 +66,8 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
         // TODO: set the tuned coefficients from DriveVelocityPIDTuner if using RUN_USING_ENCODER
         // setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ...);
 
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        StandardTrackingWheelLocalizer encoderWheels = new StandardTrackingWheelLocalizer(hardwareMap);
+        setLocalizer(encoderWheels);
     }
 
     @Override

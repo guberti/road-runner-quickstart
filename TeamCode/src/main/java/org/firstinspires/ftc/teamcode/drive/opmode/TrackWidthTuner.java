@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveBase;
 import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveREV;
 import org.firstinspires.ftc.teamcode.drive.tank.SampleTankDriveREV;
 
+import java.util.List;
+
 /*
  * This routine determines the effective track width. The procedure works by executing a point turn
  * with a given angle and measuring the difference between that angle and the actual angle (as
@@ -27,6 +29,11 @@ import org.firstinspires.ftc.teamcode.drive.tank.SampleTankDriveREV;
 public class TrackWidthTuner extends LinearOpMode {
     public static double ANGLE = Math.toRadians(180);
     public static int NUM_TRIALS = 5;
+    static final String[] ENC_WHEEL_DESCS = {
+            "Left parallel x-dist = ",
+            "Right parallel x-dist = ",
+            "Lateral y-dist = ",
+    };
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -47,8 +54,15 @@ public class TrackWidthTuner extends LinearOpMode {
         telemetry.update();
 
         MovingStatistics trackWidthStats = new MovingStatistics(NUM_TRIALS);
+        MovingStatistics[] encoderWheelStats = new MovingStatistics[3];
+        for (int i = 0; i < encoderWheelStats.length; i++) {
+            encoderWheelStats[i] = new MovingStatistics(NUM_TRIALS);
+        }
+
+
         for (int i = 0; i < NUM_TRIALS; i++) {
             drive.setPoseEstimate(new Pose2d());
+            List<Double> prevWheelDists = drive.getWheelPositions();
 
             // it is important to handle heading wraparounds
             double headingAccumulator = 0;
@@ -67,6 +81,11 @@ public class TrackWidthTuner extends LinearOpMode {
             double trackWidth = DriveConstants.TRACK_WIDTH * ANGLE / headingAccumulator;
             trackWidthStats.add(trackWidth);
 
+            List<Double> currentWheelDists = drive.getWheelPositions();
+            for (int k = 0; i < encoderWheelStats.length; i++) {
+                double distance = currentWheelDists.get(i) - prevWheelDists.get(i);
+                encoderWheelStats[i].add(distance / headingAccumulator);
+            }
             sleep(1000);
         }
 
@@ -75,6 +94,11 @@ public class TrackWidthTuner extends LinearOpMode {
         telemetry.log().add(Misc.formatInvariant("Effective track width = %.2f (SE = %.3f)",
                 trackWidthStats.getMean(),
                 trackWidthStats.getStandardDeviation() / Math.sqrt(NUM_TRIALS)));
+        for (int i = 0; i < encoderWheelStats.length; i++) {
+            telemetry.log().add(Misc.formatInvariant(ENC_WHEEL_DESCS[i] + "%.2f (SE = %.3f)",
+                    encoderWheelStats[i].getMean(),
+                    encoderWheelStats[i].getStandardDeviation() / Math.sqrt(NUM_TRIALS)));
+        }
         telemetry.update();
 
         while (!isStopRequested()) {

@@ -35,7 +35,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double RIGHT_Y_POS = -3.30;
     public static double LAT_X_POS = -7.30;
 
-    private DcMotor leftParallelEncoder, rightParallelEncoder, lateralEncoder;
+    public DcMotor leftParallelEncoder, rightParallelEncoder, lateralEncoder;
+    public DcMotor[] encoders;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
@@ -48,6 +49,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         leftParallelEncoder = hardwareMap.dcMotor.get("PTOLeft");
         rightParallelEncoder = hardwareMap.dcMotor.get("PTORight");
         lateralEncoder = hardwareMap.dcMotor.get("driveLeft");
+        encoders = new DcMotor[]{leftParallelEncoder, rightParallelEncoder, lateralEncoder};
     }
 
     public static double encoderTicksToInches(int ticks) {
