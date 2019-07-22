@@ -44,7 +44,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
                 new Vector2d(0, RIGHT_Y_POS), // right
                 new Vector2d(LAT_X_POS, 0) // front
         ), Arrays.asList(0.0, Math.toRadians(180.0), Math.toRadians(90.0)));
-        // Second encoders must be flipped around 180 degrees, but why?
+        // Second encoders must be flipped around 180 degrees, to account for wheel flipping
 
         leftParallelEncoder = hardwareMap.dcMotor.get("PTOLeft");
         rightParallelEncoder = hardwareMap.dcMotor.get("PTORight");

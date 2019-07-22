@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveBase;
 import org.firstinspires.ftc.teamcode.drive.mecanum.SampleMecanumDriveREV;
 import org.firstinspires.ftc.teamcode.drive.tank.SampleTankDriveREV;
 
+import java.util.List;
+
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
  * teleop routine and make sure the robot's estimated pose matches the robot's actual pose (slight
@@ -26,7 +28,7 @@ public class LocalizationTest extends LinearOpMode {
         while (!isStopRequested()) {
             drive.setDrivePower(new Pose2d(
                     -gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x,
+                    0,
                     -gamepad1.right_stick_x
             ));
 
@@ -36,6 +38,10 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
+            List<Double> wheelPositions = drive.encoderWheels.getWheelPositions();
+            telemetry.addData("Parallel Left", wheelPositions.get(0));
+            telemetry.addData("Parallel Right", wheelPositions.get(1));
+            telemetry.addData("Lateral", wheelPositions.get(2));
             telemetry.update();
         }
     }

@@ -17,10 +17,6 @@ import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
 
-/*
- * Simple tank drive hardware implementation for REV hardware. If your hardware configuration
- * satisfies the requirements, SampleTankDriveREVOptimized is highly recommended.
- */
 public class SampleTankDriveREV extends SampleTankDriveBase {
     private List<DcMotorEx> motors, leftMotors, rightMotors;
     private BNO055IMU imu;
@@ -31,7 +27,6 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
 
         //LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
-        // TODO: adjust the names of the following hardware devices to match your configuration
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
@@ -42,10 +37,10 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
         // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
 
         // add/remove motors depending on your robot (e.g., 6WD)
-        DcMotorEx PTOLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
-        DcMotorEx PTORight = hardwareMap.get(DcMotorEx.class, "leftRear");
-        DcMotorEx driveLeft = hardwareMap.get(DcMotorEx.class, "rightRear");
-        DcMotorEx driveRight = hardwareMap.get(DcMotorEx.class, "rightFront");
+        DcMotorEx PTOLeft = hardwareMap.get(DcMotorEx.class, "PTOLeft");
+        DcMotorEx PTORight = hardwareMap.get(DcMotorEx.class, "PTORight");
+        DcMotorEx driveLeft = hardwareMap.get(DcMotorEx.class, "driveLeft");
+        DcMotorEx driveRight = hardwareMap.get(DcMotorEx.class, "driveRight");
 
         motors = Arrays.asList(PTOLeft, PTORight, driveLeft, driveRight);
         leftMotors = Arrays.asList(PTOLeft, driveLeft);
@@ -60,13 +55,13 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
         // Left side motors are reversed so that powering
         // both sides of the drive train to +1.0 (+12V) will drive
         // the robot forward
-        driveLeft.setDirection(DcMotor.Direction.REVERSE);
-        PTOLeft.setDirection(DcMotor.Direction.REVERSE);
+        driveRight.setDirection(DcMotor.Direction.REVERSE);
+        PTORight.setDirection(DcMotor.Direction.REVERSE);
 
         // TODO: set the tuned coefficients from DriveVelocityPIDTuner if using RUN_USING_ENCODER
         // setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ...);
 
-        StandardTrackingWheelLocalizer encoderWheels = new StandardTrackingWheelLocalizer(hardwareMap);
+        encoderWheels = new StandardTrackingWheelLocalizer(hardwareMap);
         setLocalizer(encoderWheels);
     }
 
