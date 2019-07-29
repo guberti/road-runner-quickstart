@@ -3,13 +3,19 @@ package org.firstinspires.ftc.teamcode.drive.tank;
 import android.support.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.localization.Localizer;
+import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.teamcode.drive.localizer.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.drive.localizer.TwoWheelTrackingLocalizer;
+import org.firstinspires.ftc.teamcode.util.AxesSigns;
+import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
 import java.util.Arrays;
@@ -32,9 +38,7 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-        // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
-        // upward (normal to the floor) using a command like the following:
-        // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
+        BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
 
         // add/remove motors depending on your robot (e.g., 6WD)
         DcMotorEx PTOLeft = hardwareMap.get(DcMotorEx.class, "PTOLeft");
@@ -57,9 +61,6 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
         // the robot forward
         driveRight.setDirection(DcMotor.Direction.REVERSE);
         PTORight.setDirection(DcMotor.Direction.REVERSE);
-
-        // TODO: set the tuned coefficients from DriveVelocityPIDTuner if using RUN_USING_ENCODER
-        // setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, ...);
 
         encoderWheels = new StandardTrackingWheelLocalizer(hardwareMap);
         setLocalizer(encoderWheels);
@@ -105,6 +106,6 @@ public class SampleTankDriveREV extends SampleTankDriveBase {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle;
+        return imu.getAngularOrientation().thirdAngle;
     }
 }

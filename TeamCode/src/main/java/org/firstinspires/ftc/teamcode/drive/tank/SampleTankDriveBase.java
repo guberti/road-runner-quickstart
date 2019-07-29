@@ -20,6 +20,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.TankConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 
@@ -35,9 +36,9 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
  */
 @Config
 public abstract class SampleTankDriveBase extends TankDrive {
-    public static PIDCoefficients AXIAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(-0.5, 0, 0);
+    public static PIDCoefficients AXIAL_PID = new PIDCoefficients(-0.05, 0, 0);
+    public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(-0.05, 0, 0);
 
 
     public enum Mode {
@@ -56,7 +57,7 @@ public abstract class SampleTankDriveBase extends TankDrive {
     private double turnStart;
 
     private DriveConstraints constraints;
-    private TrajectoryFollower follower;
+    public TrajectoryFollower follower;
 
     public SampleTankDriveBase() {
         super(kV, kA, kStatic, TRACK_WIDTH);
@@ -108,6 +109,7 @@ public abstract class SampleTankDriveBase extends TankDrive {
         updatePoseEstimate();
 
         Pose2d currentPose = getPoseEstimate();
+        Pose2d error = follower.getLastError();
 
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
@@ -116,6 +118,10 @@ public abstract class SampleTankDriveBase extends TankDrive {
         packet.put("x", currentPose.getX());
         packet.put("y", currentPose.getY());
         packet.put("heading", currentPose.getHeading());
+        packet.put("x_error", error.getX());
+        packet.put("y_error", error.getY());
+        packet.put("heading_error", error.getHeading());
+        packet.put("turn_controller_error", turnController.getLastError());
 
         switch (mode) {
             case IDLE:

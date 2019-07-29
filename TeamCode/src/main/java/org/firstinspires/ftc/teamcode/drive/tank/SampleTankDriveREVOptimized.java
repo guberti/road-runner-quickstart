@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.teamcode.util.AxesSigns;
+import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.util.LynxOptimizedI2cFactory;
 import org.openftc.revextensions2.ExpansionHubEx;
@@ -49,7 +52,7 @@ public class SampleTankDriveREVOptimized extends SampleTankDriveBase {
 
         // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
-        // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
+        BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NNP);
 
         // add/remove motors depending on your robot (e.g., 6WD)
         ExpansionHubMotor leftFront = hardwareMap.get(ExpansionHubMotor.class, "leftFront");

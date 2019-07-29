@@ -55,14 +55,14 @@ public class TrackWidthTuner extends LinearOpMode {
 
         MovingStatistics trackWidthStats = new MovingStatistics(NUM_TRIALS);
         MovingStatistics[] encoderWheelStats = new MovingStatistics[3];
-        for (int i = 0; i < encoderWheelStats.length; i++) {
+        for (int i = 0; i < 3; i++) {
             encoderWheelStats[i] = new MovingStatistics(NUM_TRIALS);
         }
 
 
         for (int i = 0; i < NUM_TRIALS; i++) {
             drive.setPoseEstimate(new Pose2d());
-            List<Double> prevWheelDists = drive.getWheelPositions();
+            List<Double> prevWheelDists = drive.encoderWheels.getWheelPositions();
 
             // it is important to handle heading wraparounds
             double headingAccumulator = 0;
@@ -81,8 +81,9 @@ public class TrackWidthTuner extends LinearOpMode {
             double trackWidth = DriveConstants.TRACK_WIDTH * ANGLE / headingAccumulator;
             trackWidthStats.add(trackWidth);
 
-            List<Double> currentWheelDists = drive.getWheelPositions();
-            for (int k = 0; i < encoderWheelStats.length; i++) {
+            List<Double> currentWheelDists = drive.encoderWheels.getWheelPositions();
+            telemetry.log().add(String.valueOf(currentWheelDists.size()));
+            for (int k = 0; i < 3; i++) {
                 double distance = currentWheelDists.get(i) - prevWheelDists.get(i);
                 encoderWheelStats[i].add(distance / headingAccumulator);
             }

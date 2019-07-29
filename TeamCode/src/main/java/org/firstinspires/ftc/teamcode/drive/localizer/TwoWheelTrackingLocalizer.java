@@ -5,8 +5,13 @@ import android.support.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
+import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.drive.tank.SampleTankDriveREV;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,8 +20,8 @@ import java.util.List;
  * Sample tracking wheel localizer implementation assuming the standard configuration:
  *
  *    /--------------\
- *    |     ____     |
- *    |     ----     |
+ *    |              |
+ *    |              |
  *    | ||        || |
  *    | ||        || |
  *    |              |
@@ -26,30 +31,31 @@ import java.util.List;
  * Note: this could be optimized significantly with REV bulk reads
  */
 @Config
-public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
+public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 4 * 600;
     public static double WHEEL_RADIUS = 1.14426;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static double LEFT_Y_POS = 2.85;
     public static double RIGHT_Y_POS = -3.25;
-    public static double LAT_X_POS = -7.25;
 
-    public DcMotor leftParallelEncoder, rightParallelEncoder, lateralEncoder;
+    public DcMotor leftParallelEncoder, rightParallelEncoder;
     public DcMotor[] encoders;
+    SampleTankDriveREV drive;
 
-    public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
+
+    public TwoWheelTrackingLocalizer(HardwareMap hardwareMap, SampleTankDriveREV drive) {
         super(Arrays.asList(
                 new Vector2d(0, LEFT_Y_POS), // left
-                new Vector2d(0, RIGHT_Y_POS), // right
-                new Vector2d(LAT_X_POS, 0) // front
-        ), Arrays.asList(0.0, Math.toRadians(180.0), Math.toRadians(90.0)));
+                new Vector2d(0, RIGHT_Y_POS)
+        ), Arrays.asList(0.0, Math.toRadians(180.0)));
         // Second encoders must be flipped around 180 degrees, to account for wheel flipping
 
         leftParallelEncoder = hardwareMap.dcMotor.get("PTOLeft");
         rightParallelEncoder = hardwareMap.dcMotor.get("PTORight");
-        lateralEncoder = hardwareMap.dcMotor.get("driveLeft");
-        encoders = new DcMotor[]{leftParallelEncoder, rightParallelEncoder, lateralEncoder};
+        encoders = new DcMotor[]{leftParallelEncoder, rightParallelEncoder};
+
+        this.drive = drive;
     }
 
     public static double encoderTicksToInches(int ticks) {
@@ -61,8 +67,12 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public List<Double> getWheelPositions() {
         return Arrays.asList(
                 encoderTicksToInches(leftParallelEncoder.getCurrentPosition()),
-                encoderTicksToInches(rightParallelEncoder.getCurrentPosition()),
-                encoderTicksToInches(lateralEncoder.getCurrentPosition())
+                encoderTicksToInches(rightParallelEncoder.getCurrentPosition())
         );
+    }
+
+    @Override
+    public double getHeading() {
+        return drive.getRawExternalHeading();
     }
 }
